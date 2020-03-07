@@ -1,1 +1,1 @@
-Js Dom Pig Game
+A little dice game called Pig.
