@@ -7,16 +7,27 @@ GAME RULES:
 - The player can choose to 'Hold', which means that his ROUND score gets added to his GLBAL score. After that, it's the next player's turn
 - The first player to reach 100 points on GLOBAL score wins the game
 
+YOUR 3 CHALLENGES
+Change the game to follow these rules:
+
+1. A player looses his ENTIRE score when he rolls two 6 in a row. After that, it's the next player's turn. (Hint: Always save the previous dice roll in a separate variable)
+2. Add an input field to the HTML where players can set the winning score, so that they can change the predefined score of 100. (Hint: you can read that value with the .value property in JavaScript. This is a good oportunity to use google to figure this out :)
+3. Add another dice to the game, so that there are two dices now. The player looses his current score when one of them is a 1. (Hint: you will need CSS to position the second dice, so take a look at the CSS code for the first one.)
+
 */
 
-let scores, roundScore, activePlayer, gamePlaying;
+let scores, previousRoundScore, roundScore, activePlayer, winningScore, gamePlaying;
 
 init();
 
 document.querySelector('.btn-roll').addEventListener('click', function() {
   if (gamePlaying) {
+    // hide notification
+    document.querySelector('.game-notification').style.display = 'none';
+
     // Random number
     let dice = Math.floor(Math.random() * 6 + 1);
+    // let dice = 6;
 
     // Display results
     let diceDOM = document.querySelector('.dice');
@@ -25,12 +36,23 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
 
     // Update the round score IF the rolled number was not 1
     if (dice !== 1) {
-      // add score
-      roundScore += dice;
-      document.querySelector('#current-' + activePlayer).textContent = roundScore;
+      if (previousRoundScore === 6 && dice === 6) {
+        scores[activePlayer] = 0;
+        document.getElementById('score-' + activePlayer).textContent = '0';
+        nextPlayer();
+        document.querySelector('.game-notification').style.display = 'block';
+        document.querySelector('.game-notification').textContent = 'Rolled two SIXES in a row! Score reset & changing player!';
+      } else {
+        // add score
+        roundScore += dice;
+        previousRoundScore = dice;
+        document.querySelector('#current-' + activePlayer).textContent = roundScore;
+      }
     } else {
       // next player
       nextPlayer();
+      document.querySelector('.game-notification').style.display = 'block';
+      document.querySelector('.game-notification').textContent = 'Rolled ONE, changing player!';
     }
   }
 });
@@ -44,7 +66,7 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
     // check if the player won the game
-    if (scores[activePlayer] >= 20) {
+    if (scores[activePlayer] >= winningScore) {
       document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
       document.querySelector('.dice').style.display = 'none';
       document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
@@ -60,6 +82,7 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
 function nextPlayer() {
   activePlayer === 0 ? (activePlayer = 1) : (activePlayer = 0);
   roundScore = 0;
+  previousRoundScore = 0;
   document.getElementById('current-0').textContent = '0';
   document.getElementById('current-1').textContent = '0';
 
@@ -71,10 +94,16 @@ function nextPlayer() {
 
 document.querySelector('.btn-new').addEventListener('click', init);
 
+document.querySelector('#setScore').addEventListener('click', gotoSetScore);
+
+document.querySelector('.setScoreBtn').addEventListener('click', setScore);
+
 function init() {
   scores = [0, 0];
   roundScore = 0;
+  previousRoundScore = 0;
   activePlayer = 0;
+  winningScore = 100;
   gamePlaying = true;
 
   document.querySelector('.dice').style.display = 'none';
@@ -89,4 +118,27 @@ function init() {
   document.querySelector('.player-0-panel').classList.remove('active');
   document.querySelector('.player-1-panel').classList.remove('active');
   document.querySelector('.player-0-panel').classList.add('active');
+  document.querySelector('.game-notification').style.display = 'none';
+  document.querySelector('.overlay').style.display = 'none';
+}
+
+function gotoSetScore() {
+  if (gamePlaying) {
+    document.querySelector('.wrapper').style.display = 'none';
+    document.querySelector('.overlay').style.display = 'block';
+  }
+}
+
+function setScore() {
+  if (gamePlaying) {
+    let scoreInputValue = document.getElementById('scoreInput').value;
+    if (Number(scoreInputValue) && Number(scoreInputValue) >= 20 && Number(scoreInputValue) <= 1000) {
+      winningScore = Math.floor(scoreInputValue);
+      document.querySelector('.overlay').style.display = 'none';
+      document.querySelector('.wrapper').style.display = 'block';
+      document.querySelector('#winningScore').textContent = winningScore;
+    } else {
+      alert('Enter a number between 20 and 1000');
+    }
+  }
 }

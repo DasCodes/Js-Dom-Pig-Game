@@ -29,11 +29,21 @@
         </div>
       </div>
 
-      <button class="btn-new"><i class="ion-ios-plus-outline"></i>New game</button>
-      <button class="btn-roll"><i class="ion-ios-loop"></i>Roll dice</button>
-      <button class="btn-hold"><i class="ion-ios-download-outline"></i>Hold</button>
+      <button class="btn btn-new"><i class="ion-ios-plus-outline"></i>New game</button>
+      <p class="game-notification">This is a notification!</p>
+      <button class="btn btn-roll"><i class="ion-ios-loop"></i>Roll dice</button>
+      <button class="btn btn-hold"><i class="ion-ios-download-outline"></i>Hold</button>
+      <p class="scoreInfo">Winning Score <span id="winningScore">100</span> | <span id="setScore">Set Winning Score</span></p>
 
       <img src="img/dice-5.png" alt="Dice" class="dice" />
+    </div>
+
+    <div class="overlay">
+      <div class="set-score">
+        <label for="">Winning Score</label>
+        <input id="scoreInput" type="text" />
+        <button class="setScoreBtn">Set Score</button>
+      </div>
     </div>
 
     <script src="app.js"></script>
