@@ -16,7 +16,7 @@ Change the game to follow these rules:
 
 */
 
-let scores, previousRoundScore, roundScore, activePlayer, winningScore, gamePlaying;
+let scores, previousRoundScoreDice1, previousRoundScoreDice2, roundScore, activePlayer, winningScore, gamePlaying;
 
 init();
 
@@ -27,16 +27,19 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
 
     // Random number
     let dice = Math.floor(Math.random() * 6 + 1);
-    // let dice = 6;
+    let dice2 = Math.floor(Math.random() * 6 + 1);
 
     // Display results
     let diceDOM = document.querySelector('.dice');
+    let dice2DOM = document.querySelector('.dice2');
     diceDOM.style.display = 'block';
+    dice2DOM.style.display = 'block';
     diceDOM.src = 'img/dice-' + dice + '.png';
+    dice2DOM.src = 'img/dice-' + dice2 + '.png';
 
     // Update the round score IF the rolled number was not 1
-    if (dice !== 1) {
-      if (previousRoundScore === 6 && dice === 6) {
+    if (dice !== 1 && dice2 !== 1) {
+      if (((previousRoundScore === 6 || previousRoundScoreDice2 === 6) && (dice === 6 || dice2 === 6)) || (dice === 6 && dice2 === 6)) {
         scores[activePlayer] = 0;
         document.getElementById('score-' + activePlayer).textContent = '0';
         nextPlayer();
@@ -44,8 +47,9 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
         document.querySelector('.game-notification').textContent = 'Rolled two SIXES in a row! Score reset & changing player!';
       } else {
         // add score
-        roundScore += dice;
-        previousRoundScore = dice;
+        roundScore += dice + dice2;
+        previousRoundScoreDice1 = dice;
+        previousRoundScoreDice2 = dice2;
         document.querySelector('#current-' + activePlayer).textContent = roundScore;
       }
     } else {
@@ -90,6 +94,7 @@ function nextPlayer() {
   document.querySelector('.player-1-panel').classList.toggle('active');
 
   document.querySelector('.dice').style.display = 'none';
+  document.querySelector('.dice2').style.display = 'none';
 }
 
 document.querySelector('.btn-new').addEventListener('click', init);
@@ -107,6 +112,7 @@ function init() {
   gamePlaying = true;
 
   document.querySelector('.dice').style.display = 'none';
+  document.querySelector('.dice2').style.display = 'none';
   document.getElementById('score-0').textContent = '0';
   document.getElementById('score-1').textContent = '0';
   document.getElementById('current-0').textContent = '0';
